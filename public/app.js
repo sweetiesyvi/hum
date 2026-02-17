@@ -8,3 +8,21 @@ document.getElementById('btn').addEventListener('click', () => {
       document.getElementById('result').textContent = 'API error'
     })
 })
+document.getElementById('sendBtn').addEventListener('click', () => {
+  const name = document.getElementById('nameInput').value
+
+  fetch('/api/body', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ name })
+  })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('postResult').textContent = data.message
+    })
+    .catch(() => {
+      document.getElementById('postResult').textContent = 'POST error'
+    })
+})
