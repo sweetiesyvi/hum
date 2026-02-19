@@ -11,7 +11,7 @@ document.getElementById('btn').addEventListener('click', () => {
 document.getElementById('sendBtn').addEventListener('click', () => {
   const name = document.getElementById('nameInput').value
 
-  fetch('/api/body', {
+  fetch('/api/save', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
