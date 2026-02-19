@@ -1,3 +1,4 @@
+
 document.getElementById('btn').addEventListener('click', () => {
   fetch('/api/hello')
     .then(res => res.json())
@@ -8,14 +9,13 @@ document.getElementById('btn').addEventListener('click', () => {
       document.getElementById('result').textContent = 'API error'
     })
 })
+
 document.getElementById('sendBtn').addEventListener('click', () => {
   const name = document.getElementById('nameInput').value
 
   fetch('/api/save', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name })
   })
     .then(res => res.json())
@@ -24,5 +24,23 @@ document.getElementById('sendBtn').addEventListener('click', () => {
     })
     .catch(() => {
       document.getElementById('postResult').textContent = 'POST error'
+    })
+})
+
+document.getElementById('loadUsers').addEventListener('click', () => {
+  fetch('/api/users')
+    .then(res => res.json())
+    .then(users => {
+      const list = document.getElementById('usersList')
+      list.innerHTML = ''
+
+      users.forEach(u => {
+        const li = document.createElement('li')
+        li.textContent = u.name
+        list.appendChild(li)
+      })
+    })
+    .catch(() => {
+      document.getElementById('usersList').innerHTML = 'Error loading users'
     })
 })
