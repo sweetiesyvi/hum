@@ -8,68 +8,54 @@ dotenv.config()
 
 const app = express()
 
-
+// __dirname fix for ES modules
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 app.use(express.static(join(__dirname, 'public')))
 app.use(express.json())
 
-
+// Mongo setup
 const client = new MongoClient(process.env.MONGO_URI)
 let db
 
 async function connectDB() {
   try {
     await client.connect()
-    db = client.db('school') 
-    console.log(' Mongo connecté')
+    db = client.db('school')
+    console.log('Mongo connected')
   } catch (err) {
-    console.error(' Mongo erreur:', err)
+    console.error('Mongo error:', err)
   }
 }
 connectDB()
 
-// ROUTES
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from API (Checkpoint 2)' })
 })
 
-app.get('/api/query', (req, res) => {
-  res.json({ message: `Hello ${req.query.name}` })
+app.post('/api/save', async (req, res) => {
+  try {
+    const { name } = req.body
+    await db.collection('users').insertOne({ name })
+    res.json({ message: `Saved ${name} to MongoDB` })
+  } catch (err) {
+    res.status(500).json({ error: 'DB save error' })
+  }
 })
 
 app.get('/api/users', async (req, res) => {
-  const users = await User.find().sort({ _id: -1 }).limit(10)
-  res.json(users)
-})
-
-app.post('/api/body', (req, res) => {
-  res.json({ message: `Hello ${req.body.name}` })
-})
-
-document.getElementById('loadUsers').addEventListener('click', () => {
-  fetch('/api/users')
-    .then(res => res.json())
-    .then(users => {
-      const list = document.getElementById('usersList')
-      list.innerHTML = ''
-      users.forEach(u => {
-        const li = document.createElement('li')
-        li.textContent = u.name
-        list.appendChild(li)
-      })
-    })
-})
-
-
-
-app.get('/api/db-test', async (req, res) => {
   try {
-    const result = await db.collection('test').insertOne({ time: new Date() })
-    res.json({ ok: true, id: result.insertedId })
+    const users = await db
+      .collection('users')
+      .find()
+      .sort({ _id: -1 })
+      .limit(10)
+      .toArray()
+
+    res.json(users)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ error: 'DB read error' })
   }
 })
 
