@@ -8,14 +8,14 @@ dotenv.config()
 
 const app = express()
 
-// paths
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 app.use(express.static(join(__dirname, 'public')))
 app.use(express.json())
 
-// Mongo
+
 const client = new MongoClient(process.env.MONGO_URI)
 let db
 
