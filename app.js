@@ -1,44 +1,36 @@
 import express from 'express'
+import dotenv from 'dotenv'
+import { MongoClient } from 'mongodb'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
-import dotenv from 'dotenv'
-import { MongoClient, ServerApiVersion } from 'mongodb'
 
 dotenv.config()
 
 const app = express()
 
-// Paths
+// paths
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 app.use(express.static(join(__dirname, 'public')))
 app.use(express.json())
 
-const uri = process.env.MONGO_URI
-
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true
-  }
-})
-
+// Mongo
+const client = new MongoClient(process.env.MONGO_URI)
 let db
 
 async function connectDB() {
   try {
     await client.connect()
-    db = client.db("test") // database name
-    console.log("Connected to MongoDB")
+    db = client.db('school') // nom libre
+    console.log(' Mongo connecté')
   } catch (err) {
-    console.error(" MongoDB connection error:", err)
+    console.error(' Mongo erreur:', err)
   }
 }
-
 connectDB()
 
+// ROUTES
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from API (Checkpoint 2)' })
 })
@@ -51,42 +43,17 @@ app.post('/api/body', (req, res) => {
   res.json({ message: `Hello ${req.body.name}` })
 })
 
+// TEST MONGO
 app.get('/api/db-test', async (req, res) => {
   try {
-    await db.command({ ping: 1 })
-    res.json({ message: "MongoDB is working" })
+    const result = await db.collection('test').insertOne({ time: new Date() })
+    res.json({ ok: true, id: result.insertedId })
   } catch (err) {
-    res.status(500).json({ error: "DB connection failed" })
-  }
-})
-
-app.post('/api/save', async (req, res) => {
-  try {
-    const { name } = req.body
-
-    if (!name) {
-      return res.status(400).json({ error: "Name is required" })
-    }
-
-    const result = await db.collection("demo").insertOne({
-      name,
-      createdAt: new Date()
-    })
-
-    res.json({
-      message: "Saved to database",
-      id: result.insertedId
-    })
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: "Save failed" })
+    res.status(500).json({ error: err.message })
   }
 })
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
-
   console.log(`Server running on port ${PORT}`)
 })
