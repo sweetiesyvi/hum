@@ -8,6 +8,7 @@ dotenv.config()
 
 const app = express()
 
+
 // __dirname fix for ES modules
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -70,4 +71,14 @@ connectDB().then(() => {
   })
 }).catch(err => {
   console.error('Failed to start server:', err)
+})
+
+app.get('/', (req, res) => {
+  res.send('Hello World: DEV')
+})
+
+const PORT = process.env.PORT || 3000
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })
