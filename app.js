@@ -26,15 +26,16 @@ async function connectDB() {
     console.log('Mongo connected')
   } catch (err) {
     console.error('Mongo error:', err)
+    process.exit(1) // Arrêter le serveur si connexion échoue
   }
 }
-connectDB()
 
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from API (Checkpoint 2)' })
 })
 
 app.post('/api/save', async (req, res) => {
+  if (!db) return res.status(500).json({ error: 'DB not connected' })
   try {
     const { name } = req.body
     await db.collection('users').insertOne({ name })
@@ -45,6 +46,7 @@ app.post('/api/save', async (req, res) => {
 })
 
 app.get('/api/users', async (req, res) => {
+  if (!db) return res.status(500).json({ error: 'DB not connected' })
   try {
     const users = await db
       .collection('users')
@@ -60,6 +62,12 @@ app.get('/api/users', async (req, res) => {
 })
 
 const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+
+// Démarrer le serveur après connexion DB
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+}).catch(err => {
+  console.error('Failed to start server:', err)
 })
