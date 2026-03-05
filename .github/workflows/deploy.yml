@@ -44,5 +44,4 @@ jobs:
             pm2 start -f app.js --name "$PM2_NAME"
 
             pm2 save
-            exit
           EOF
