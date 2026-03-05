@@ -29,8 +29,8 @@ jobs:
         env:
           SSH_USER: ngulungudulcinee #${{ secrets.SSH_USER }}
           SSH_HOST: 35.222.142.127 #${{ secrets.SSH_HOST }}
-          APP_DIR:  app # ${{ vars.APP_DIR }}
-          PM2_NAME: app # ${{ vars.PM2_NAME }}
+          APP_DIR:  hum # ${{ vars.APP_DIR }}
+          PM2_NAME: hum # ${{ vars.PM2_NAME }}
         run: |
           ssh -i ~/.ssh/id_rsa -T "$SSH_USER@$SSH_HOST" <<EOF
             set -e
