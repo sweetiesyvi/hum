@@ -1,4 +1,4 @@
-# Student Manager
+## Student Manager
 
 Student Manager is a simple full stack web application that allows users to manage a list of students.
 
