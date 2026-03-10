@@ -1,30 +1,29 @@
 let currentId = null
 
-$(document).ready(function(){
+$(document).ready(function () {
 
-loadUsers()
+    loadUsers()
 
-$("#addBtn").click(addUser)
+    $("#addBtn").click(addUser)
 
-$("#updateBtn").click(updateUser)
+    $("#updateBtn").click(updateUser)
 
 })
 
-function loadUsers(){
+function loadUsers() {
 
-fetch('/api/users')
+    fetch('/api/users')
 
-.then(res=>res.json())
+            .then(res => res.json())
 
-.then(users=>{
+            .then(users => {
 
-$("#tableBody").html("")
+                $("#tableBody").html("")
 
-users.forEach(u=>{
+                users.forEach(u => {
 
-$("#tableBody").append(
-
-`<tr>
+                    $("#tableBody").append(
+                            `<tr>
 
 <td>${u.name}</td>
 
@@ -48,94 +47,94 @@ Delete
 
 </tr>`
 
-)
+                            )
 
-})
+                })
 
-})
-
-}
-
-function addUser(){
-
-const name = $("#nameInput").val()
-
-fetch('/api/users',{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({name})
-
-})
-
-.then(()=>{
-
-$("#nameInput").val("")
-
-loadUsers()
-
-})
+            })
 
 }
 
-function editUser(id,name){
+function addUser() {
 
-currentId = id
+    const name = $("#nameInput").val()
 
-$("#nameInput").val(name)
+    fetch('/api/users', {
 
-$("#addBtn").hide()
+        method: "POST",
 
-$("#updateBtn").show()
+        headers: {
+            "Content-Type": "application/json"
+        },
 
-}
+        body: JSON.stringify({name})
 
-function updateUser(){
+    })
 
-const name = $("#nameInput").val()
+            .then(() => {
 
-fetch('/api/users/'+currentId,{
+                $("#nameInput").val("")
 
-method:"PUT",
+                loadUsers()
 
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({name})
-
-})
-
-.then(()=>{
-
-$("#nameInput").val("")
-
-$("#addBtn").show()
-
-$("#updateBtn").hide()
-
-loadUsers()
-
-})
+            })
 
 }
 
-function deleteUser(id){
+function editUser(id, name) {
 
-fetch('/api/users/'+id,{
+    currentId = id
 
-method:"DELETE"
+    $("#nameInput").val(name)
 
-})
+    $("#addBtn").hide()
 
-.then(()=>{
+    $("#updateBtn").show()
 
-loadUsers()
+}
 
-})
+function updateUser() {
+
+    const name = $("#nameInput").val()
+
+    fetch('/api/users/' + currentId, {
+
+        method: "PUT",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({name})
+
+    })
+
+            .then(() => {
+
+                $("#nameInput").val("")
+
+                $("#addBtn").show()
+
+                $("#updateBtn").hide()
+
+                loadUsers()
+
+            })
+
+}
+
+function deleteUser(id) {
+
+    fetch('/api/users/' + id, {
+
+        method: "DELETE"
+
+    })
+
+            .then(() => {
+
+                loadUsers()
+
+            })
 
 }
