@@ -19,29 +19,29 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          ssh-keyscan -H 35.222.142.127 >> ~/.ssh/known_hosts
+          # safer than StrictHostKeyChecking=no
+          # ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -H  35.222.142.127  >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
       - name: Deploy over SSH
         shell: bash
         env:
-          SSH_USER: ngulungudulcinee
-          SSH_HOST: 35.222.142.127
-          APP_DIR: hum
-          PM2_NAME: hum
+          SSH_USER: ngulungudulcinee #${{ secrets.SSH_USER }}
+          SSH_HOST: 35.222.142.127 #${{ secrets.SSH_HOST }}
+          APP_DIR:  hum # ${{ vars.APP_DIR }}
+          PM2_NAME: hum # ${{ vars.PM2_NAME }}
         run: |
           ssh -i ~/.ssh/id_rsa -T "$SSH_USER@$SSH_HOST" <<EOF
             set -e
 
             cd "$APP_DIR"
 
-            git fetch origin
-            git reset --hard origin/main
-
-            npm ci
+            git pull
+            sudo npm ci
 
             pm2 delete "$PM2_NAME" || true
-            pm2 start app.js --name "$PM2_NAME"
+            pm2 start -f app.js --name "$PM2_NAME"
 
             pm2 save
           EOF
