@@ -1,15 +1,18 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import { MongoClient, ObjectId } from 'mongodb'
-import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
+import { MongoClient, ObjectId }
+from 'mongodb'
+import { fileURLToPath }
+from 'url'
+import { dirname, join }
+from 'path'
 
 dotenv.config()
 
 const app = express()
 
 const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+        const __dirname = dirname(__filename)
 
 app.use(express.static(join(__dirname, 'public')))
 app.use(express.json())
@@ -18,21 +21,21 @@ const client = new MongoClient(process.env.MONGO_URI)
 
 let db
 
-async function connectDB(){
+async function connectDB() {
 
-try{
+    try {
 
-await client.connect()
+        await client.connect()
 
-db = client.db("school")
+        db = client.db("school")
 
-console.log("MongoDB connected")
+        console.log("MongoDB connected")
 
-}catch(err){
+    } catch (err) {
 
-console.error(err)
+        console.error(err)
 
-}
+    }
 
 }
 
@@ -40,96 +43,96 @@ connectDB()
 
 /* CREATE */
 
-app.post('/api/users', async(req,res)=>{
+app.post('/api/users', async(req, res) => {
 
-try{
+    try {
 
-const {name} = req.body
+        const {name} = req.body
 
-await db.collection("users").insertOne({name})
+        await db.collection("users").insertOne({name})
 
-res.status(201).json({message:"User created"})
+        res.status(201).json({message: "User created"})
 
-}catch(err){
+    } catch (err) {
 
-res.status(500).json({error:"database error"})
+        res.status(500).json({error: "database error"})
 
-}
+    }
 
 })
 
 /* READ */
 
-app.get('/api/users', async(req,res)=>{
+app.get('/api/users', async(req, res) => {
 
-try{
+    try {
 
-const users = await db.collection("users")
-.find()
-.sort({_id:-1})
-.toArray()
+        const users = await db.collection("users")
+                .find()
+                .sort({_id: -1})
+                .toArray()
 
-res.status(200).json(users)
+        res.status(200).json(users)
 
-}catch(err){
+    } catch (err) {
 
-res.status(500).json({error:"database error"})
+        res.status(500).json({error: "database error"})
 
-}
+    }
 
 })
 
 /* UPDATE */
 
-app.put('/api/users/:id', async(req,res)=>{
+app.put('/api/users/:id', async(req, res) => {
 
-try{
+    try {
 
-const {id} = req.params
+        const {id} = req.params
 
-const {name} = req.body
+        const {name} = req.body
 
-await db.collection("users").updateOne(
-{_id:new ObjectId(id)},
-{$set:{name}}
-)
+        await db.collection("users").updateOne(
+                {_id: new ObjectId(id)},
+                {$set: {name}}
+        )
 
-res.status(200).json({message:"User updated"})
+        res.status(200).json({message: "User updated"})
 
-}catch(err){
+    } catch (err) {
 
-res.status(500).json({error:"update error"})
+        res.status(500).json({error: "update error"})
 
-}
+    }
 
 })
 
 /* DELETE */
 
-app.delete('/api/users/:id', async(req,res)=>{
+app.delete('/api/users/:id', async(req, res) => {
 
-try{
+    try {
 
-const {id} = req.params
+        const {id} = req.params
 
-await db.collection("users").deleteOne({
-_id:new ObjectId(id)
-})
+        await db.collection("users").deleteOne({
+            _id: new ObjectId(id)
+        })
 
-res.status(200).json({message:"User deleted"})
+        res.status(200).json({message: "User deleted"})
 
-}catch(err){
+    } catch (err) {
 
-res.status(500).json({error:"delete error"})
+        res.status(500).json({error: "delete error"})
 
-}
+    }
 
 })
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
 
-console.log("Server running on port",PORT)
+    console.log("Server running on port", PORT)
 
 })
