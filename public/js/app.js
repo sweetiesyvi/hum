@@ -1,78 +1,54 @@
-const addBtn = document.getElementById("addBtn")
-const updateBtn = document.getElementById("updateBtn")
-const nameInput = document.getElementById("nameInput")
-const tableBody = document.getElementById("tableBody")
+let currentId = null
 
-let currentUserId = null
-
-addBtn.addEventListener("click", addUser)
-updateBtn.addEventListener("click", updateUser)
+$(document).ready(function(){
 
 loadUsers()
 
-/* CREATE */
+$("#addBtn").click(addUser)
 
-function addUser() {
+$("#updateBtn").click(updateUser)
 
-  const name = nameInput.value
-
-  fetch('/api/users', {
-
-    method: 'POST',
-
-    headers: {
-      'Content-Type': 'application/json'
-    },
-
-    body: JSON.stringify({ name })
-
-  })
-  .then(res => res.json())
-  .then(() => {
-
-    nameInput.value = ""
-
-    loadUsers()
-
-  })
-
-}
-
-/* READ */
+})
 
 function loadUsers(){
 
 fetch('/api/users')
 
-.then(res => res.json())
+.then(res=>res.json())
 
-.then(users => {
+.then(users=>{
 
-tableBody.innerHTML = ""
+$("#tableBody").html("")
 
-users.forEach(u => {
+users.forEach(u=>{
 
-const row = document.createElement("tr")
+$("#tableBody").append(
 
-row.innerHTML = `
+`<tr>
 
 <td>${u.name}</td>
 
 <td>
 
-<button class="btn btn-warning btn-sm" onclick="editUser('${u._id}','${u.name}')">
+<button class="btn btn-warning btn-sm"
+onclick="editUser('${u._id}','${u.name}')">
+
 Edit
+
 </button>
 
-<button class="btn btn-danger btn-sm" onclick="deleteUser('${u._id}')">
+<button class="btn btn-danger btn-sm"
+onclick="deleteUser('${u._id}')">
+
 Delete
+
 </button>
 
 </td>
 
-`
+</tr>`
 
-tableBody.appendChild(row)
+)
 
 })
 
@@ -80,47 +56,25 @@ tableBody.appendChild(row)
 
 }
 
-/* PREPARE UPDATE */
+function addUser(){
 
-function editUser(id, name){
+const name = $("#nameInput").val()
 
-currentUserId = id
+fetch('/api/users',{
 
-nameInput.value = name
-
-addBtn.style.display = "none"
-
-updateBtn.style.display = "inline-block"
-
-}
-
-/* UPDATE */
-
-function updateUser(){
-
-fetch('/api/users/' + currentUserId, {
-
-method:'PUT',
+method:"POST",
 
 headers:{
-'Content-Type':'application/json'
+"Content-Type":"application/json"
 },
 
-body:JSON.stringify({
-
-name:nameInput.value
+body:JSON.stringify({name})
 
 })
 
-})
-.then(res=>res.json())
 .then(()=>{
 
-nameInput.value = ""
-
-addBtn.style.display = "inline-block"
-
-updateBtn.style.display = "none"
+$("#nameInput").val("")
 
 loadUsers()
 
@@ -128,15 +82,56 @@ loadUsers()
 
 }
 
-/* DELETE */
+function editUser(id,name){
+
+currentId = id
+
+$("#nameInput").val(name)
+
+$("#addBtn").hide()
+
+$("#updateBtn").show()
+
+}
+
+function updateUser(){
+
+const name = $("#nameInput").val()
+
+fetch('/api/users/'+currentId,{
+
+method:"PUT",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({name})
+
+})
+
+.then(()=>{
+
+$("#nameInput").val("")
+
+$("#addBtn").show()
+
+$("#updateBtn").hide()
+
+loadUsers()
+
+})
+
+}
 
 function deleteUser(id){
 
-fetch('/api/users/' + id,{
+fetch('/api/users/'+id,{
 
-method:'DELETE'
+method:"DELETE"
 
 })
+
 .then(()=>{
 
 loadUsers()
