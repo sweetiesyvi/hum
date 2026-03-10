@@ -4,7 +4,6 @@
     <head>
 
         <meta charset="UTF-8">
-
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>Student Manager</title>
@@ -21,53 +20,72 @@
 
     <body>
 
+        <nav class="navbar navbar-dark bg-dark shadow-sm">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1">Student Manager</span>
+            </div>
+        </nav>
+
         <div class="container mt-5">
 
-            <h1 class="text-center mb-4">Student Manager</h1>
+            <div class="row justify-content-center">
 
-            <div class="card p-3 mb-4">
+                <div class="col-md-8">
 
-                <input
-                    id="nameInput"
-                    class="form-control mb-2"
-                    placeholder="Student name">
+                    <div class="card p-4 mb-4">
 
-                <button id="addBtn"
-                        class="btn btn-primary">
-                    Add Student
-                </button>
+                        <h4 class="mb-3">Add / Edit Student</h4>
 
-                <button id="updateBtn"
-                        class="btn btn-warning mt-2"
-                        style="display:none">
-                    Update Student
-                </button>
+                        <input
+                            id="nameInput"
+                            class="form-control mb-3"
+                            placeholder="Enter student name">
+
+                        <button id="addBtn" class="btn btn-primary w-100">
+                            Add Student
+                        </button>
+
+                        <button id="updateBtn"
+                                class="btn btn-warning w-100 mt-2"
+                                style="display:none">
+                            Update Student
+                        </button>
+
+                    </div>
+
+                    <div class="card p-4">
+
+                        <h4 class="mb-3">Student List</h4>
+
+                        <table class="table table-hover">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Name</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="tableBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
 
             </div>
 
-            <table class="table table-striped">
-
-                <thead>
-
-                    <tr>
-                        <th>Name</th>
-                        <th>Actions</th>
-                    </tr>
-
-                </thead>
-
-                <tbody id="tableBody"></tbody>
-
-            </table>
-
         </div>
 
-        <footer class="text-center mt-5">
+        <footer class="text-center mt-5 mb-4">
 
             <p>
                 Dev Lab Quebec Full Stack Project
             </p>
-            <p>
+              <p>  
                 Author: Sweetiesyvi
             </p>
 
