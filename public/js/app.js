@@ -1,46 +1,146 @@
+const addBtn = document.getElementById("addBtn")
+const updateBtn = document.getElementById("updateBtn")
+const nameInput = document.getElementById("nameInput")
+const tableBody = document.getElementById("tableBody")
 
-document.getElementById('btn').addEventListener('click', () => {
-  fetch('/api/hello')
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('result').textContent = data.message
-    })
-    .catch(() => {
-      document.getElementById('result').textContent = 'API error'
-    })
-})
+let currentUserId = null
 
-document.getElementById('sendBtn').addEventListener('click', () => {
-  const name = document.getElementById('nameInput').value
+addBtn.addEventListener("click", addUser)
+updateBtn.addEventListener("click", updateUser)
 
-  fetch('/api/save', {
+loadUsers()
+
+/* CREATE */
+
+function addUser() {
+
+  const name = nameInput.value
+
+  fetch('/api/users', {
+
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+
+    headers: {
+      'Content-Type': 'application/json'
+    },
+
     body: JSON.stringify({ name })
+
   })
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('postResult').textContent = data.message
-    })
-    .catch(() => {
-      document.getElementById('postResult').textContent = 'POST error'
-    })
+  .then(res => res.json())
+  .then(() => {
+
+    nameInput.value = ""
+
+    loadUsers()
+
+  })
+
+}
+
+/* READ */
+
+function loadUsers(){
+
+fetch('/api/users')
+
+.then(res => res.json())
+
+.then(users => {
+
+tableBody.innerHTML = ""
+
+users.forEach(u => {
+
+const row = document.createElement("tr")
+
+row.innerHTML = `
+
+<td>${u.name}</td>
+
+<td>
+
+<button class="btn btn-warning btn-sm" onclick="editUser('${u._id}','${u.name}')">
+Edit
+</button>
+
+<button class="btn btn-danger btn-sm" onclick="deleteUser('${u._id}')">
+Delete
+</button>
+
+</td>
+
+`
+
+tableBody.appendChild(row)
+
 })
 
-document.getElementById('loadUsers').addEventListener('click', () => {
-  fetch('/api/users')
-    .then(res => res.json())
-    .then(users => {
-      const list = document.getElementById('usersList')
-      list.innerHTML = ''
-
-      users.forEach(u => {
-        const li = document.createElement('li')
-        li.textContent = u.name
-        list.appendChild(li)
-      })
-    })
-    .catch(() => {
-      document.getElementById('usersList').innerHTML = 'Error loading users'
-    })
 })
+
+}
+
+/* PREPARE UPDATE */
+
+function editUser(id, name){
+
+currentUserId = id
+
+nameInput.value = name
+
+addBtn.style.display = "none"
+
+updateBtn.style.display = "inline-block"
+
+}
+
+/* UPDATE */
+
+function updateUser(){
+
+fetch('/api/users/' + currentUserId, {
+
+method:'PUT',
+
+headers:{
+'Content-Type':'application/json'
+},
+
+body:JSON.stringify({
+
+name:nameInput.value
+
+})
+
+})
+.then(res=>res.json())
+.then(()=>{
+
+nameInput.value = ""
+
+addBtn.style.display = "inline-block"
+
+updateBtn.style.display = "none"
+
+loadUsers()
+
+})
+
+}
+
+/* DELETE */
+
+function deleteUser(id){
+
+fetch('/api/users/' + id,{
+
+method:'DELETE'
+
+})
+.then(()=>{
+
+loadUsers()
+
+})
+
+}
