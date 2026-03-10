@@ -18,48 +18,65 @@ const client = new MongoClient(process.env.MONGO_URI)
 let db
 
 async function connectDB() {
-  await client.connect()
-  db = client.db('school')
-  console.log("MongoDB connected")
+  try {
+    await client.connect()
+    db = client.db('school')
+    console.log("MongoDB connected")
+  } catch (err) {
+    console.error("MongoDB connection error:", err)
+  }
 }
 
-app.post('/api/users', async (req,res)=>{
-  const {name} = req.body
-  await db.collection('users').insertOne({name})
-  res.json({message:"User added"})
+/* CREATE */
+app.post('/api/users', async (req, res) => {
+  const { name } = req.body
+
+  await db.collection('users').insertOne({ name })
+
+  res.json({ message: "User added" })
 })
 
-app.get('/api/users', async (req,res)=>{
-  const users = await db.collection('users').find().toArray()
+/* READ */
+app.get('/api/users', async (req, res) => {
+
+  const users = await db.collection('users')
+    .find()
+    .sort({ _id: -1 })
+    .toArray()
+
   res.json(users)
 })
 
-app.put('/api/users/:id', async (req,res)=>{
-  const {id} = req.params
-  const {name} = req.body
+/* UPDATE */
+app.put('/api/users/:id', async (req, res) => {
+
+  const { id } = req.params
+  const { name } = req.body
 
   await db.collection('users').updateOne(
-    {_id:new ObjectId(id)},
-    {$set:{name}}
+    { _id: new ObjectId(id) },
+    { $set: { name } }
   )
 
-  res.json({message:"User updated"})
+  res.json({ message: "User updated" })
 })
 
-app.delete('/api/users/:id', async (req,res)=>{
-  const {id} = req.params
+/* DELETE */
+app.delete('/api/users/:id', async (req, res) => {
+
+  const { id } = req.params
 
   await db.collection('users').deleteOne({
-    _id:new ObjectId(id)
+    _id: new ObjectId(id)
   })
 
-  res.json({message:"User deleted"})
+  res.json({ message: "User deleted" })
 })
 
 const PORT = process.env.PORT || 3000
 
-connectDB().then(()=>{
-  app.listen(PORT,()=>{
-    console.log("Server running on",PORT)
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log("Server running on port", PORT)
   })
 })
