@@ -1,27 +1,25 @@
 {
-  "name": "hum",
+  "name": "student-manager",
   "version": "1.0.0",
-  "description": "",
+  "description": "Full stack MVC CRUD application using Node.js, Express, MongoDB",
   "type": "module",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sweetiesyvi/hum.git"
+    "url": "https://github.com/sweetiesyvi/hum.git"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Your Name",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/sweetiesyvi/hum/issues"
-  },
-  "homepage": "https://github.com/sweetiesyvi/hum#readme",
   "dependencies": {
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "mongodb": "^7.1.0",
+    "mongodb": "^7.1.0"
+  },
+  "devDependencies": {
     "nodemon": "^3.1.14"
   }
 }
